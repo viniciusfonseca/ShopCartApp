@@ -59,20 +59,72 @@ namespace ShopCart.Tests.Customer
 
             postResult.Res.EnsureSuccessStatusCode();
             var createdCustomer = await postResult.Deserialize();
-            Assert.Equal(createdCustomer.Name, "Vinicius Fonseca Create");
+            Assert.Equal(createdCustomer.Name, payload.name);
 
             var getResult = new JSONResponse<IEnumerable<Models.Customer>>(
                 await _client.GetAsync("/customers"));
 
             getResult.Res.EnsureSuccessStatusCode();
 
-            Assert.Contains(await getResult.Deserialize(), p => p.Name == "Vinicius Fonseca Create");
+            Assert.Contains(await getResult.Deserialize(), p => p.Name == payload.name);
         }
 
         [Fact]
         public async Task CanUpdateCustomer()
         {
-            
+            var _ctx = Utils.Globals.GetContext();
+            var customer = _ctx.Add(new Models.Customer {
+                Name = "Vinicius Fonseca Updated",
+                Gender = "M",
+                Email = "vfonseca@example.com"
+            }).Entity;
+            await _ctx.SaveChangesAsync();
+
+            var payload = new {
+                name = "Vinicius Fonseca Updated 2",
+                email = "vfonseca@example.com",
+                gender = "M",
+                address = new {
+                    street = "Rua XPTO",
+                    number = "123",
+                    state = "SP",
+                    city = "São Paulo"
+                }
+            };
+
+            var putResult = new JSONResponse<Models.Customer>(
+                await _client.PutAsync($"/customers/{customer.Id}", new JSONContent(payload).GetStringContent())
+            );
+
+            putResult.Res.EnsureSuccessStatusCode();
+            var updatedCustomer = await putResult.Deserialize();
+            Assert.Equal(updatedCustomer.Name, payload.name);
+
+            var getResult = new JSONResponse<Models.Customer>(
+                await _client.GetAsync($"/customers/{customer.Id}")
+            );
+
+            getResult.Res.EnsureSuccessStatusCode();
+            var customerFromGet = await getResult.Deserialize();
+            Assert.Equal(customerFromGet.Name, payload.name);
+        }
+
+        [Fact]
+        public async Task CanDeleteCustomer()
+        {
+            var _ctx = Utils.Globals.GetContext();
+            var customer = _ctx.Add(new Models.Customer {
+                Name = "Vinicius Fonseca Delete",
+                Gender = "M",
+                Email = "vfonseca@example.com"
+            }).Entity;
+            await _ctx.SaveChangesAsync();
+
+            var deleteResult = await _client.DeleteAsync($"/customers/{customer.Id}");
+            deleteResult.EnsureSuccessStatusCode();
+
+            var nonExistentCustomer = await _ctx.Customers.FindAsync(customer.Id);
+            Assert.Equal(nonExistentCustomer, null);
         }
     }
 }

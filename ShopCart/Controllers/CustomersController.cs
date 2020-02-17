@@ -56,7 +56,7 @@ namespace ShopCart.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete([FromRoute] int id)
+        public async Task<IActionResult> Delete(int id)
         {
             await _customerService.Delete(id);
             return Ok();
