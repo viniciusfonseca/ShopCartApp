@@ -15,49 +15,50 @@ namespace ShopCart.Controllers
     {
         private readonly ILogger<CustomersController> _logger;
         private readonly ShopCartContext _ctx;
+        private readonly Services.CustomerService _customerService;
 
-        public CustomersController(ILogger<CustomersController> logger, ShopCartContext ctx)
+        public CustomersController(
+            ILogger<CustomersController> logger,
+            ShopCartContext ctx
+        )
         {
             _logger = logger;
             _ctx = ctx;
+            _customerService = new Services.CustomerService(_ctx);
         }
 
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] int count = 10, [FromQuery] int page = 1)
         {
-            var result = await _ctx.Customers.ToListAsync();
+            var result = await _customerService.List();
             return Ok(result);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOne(int id)
         {
-            var result = await _ctx.Customers.FindAsync(id);
+            var result = await _customerService.GetById(id);
             return Ok(result);
         }
 
         [HttpPost]
         public async Task<IActionResult> Post(Models.Customer customer)
         {
-            _ctx.Customers.Add(customer);
-            await _ctx.SaveChangesAsync();
+            await _customerService.Create(customer);
             return CreatedAtAction(nameof(GetOne), new { id = customer.Id }, customer);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, Models.Customer customer)
         {
-            _ctx.Entry(customer).State = EntityState.Modified;
-            await _ctx.SaveChangesAsync();
+            var result = await _customerService.Update(id, customer);
             return Ok(customer);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            var result = await _ctx.Customers.FindAsync(id);
-            _ctx.Customers.Remove(result);
-            await _ctx.SaveChangesAsync();
+            await _customerService.Delete(id);
             return Ok();
         }
     }

@@ -5,7 +5,7 @@ using System.Net.Http.Headers;
 using Xunit;
 using ShopCart.Tests.Utils;
 
-namespace ShopCart.Tests
+namespace ShopCart.Tests.Customer
 {
     public class CRUDTests : IClassFixture<TestWebApplicationFactory<Startup>>
     {
@@ -67,6 +67,12 @@ namespace ShopCart.Tests
             getResult.Res.EnsureSuccessStatusCode();
 
             Assert.Contains(await getResult.Deserialize(), p => p.Name == "Vinicius Fonseca Create");
+        }
+
+        [Fact]
+        public async Task CanUpdateCustomer()
+        {
+            
         }
     }
 }
