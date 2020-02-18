@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ShopCart.Contexts;
 using Microsoft.EntityFrameworkCore;
+using ShopCart.Filters;
 
 namespace ShopCart.Controllers
 {
     [ApiController]
+    // [TypeFilter(typeof(ExceptionHandler))]
     [Route("[controller]")]
     public class CustomersController : ControllerBase
     {

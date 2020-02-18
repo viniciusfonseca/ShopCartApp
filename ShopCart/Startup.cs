@@ -30,7 +30,10 @@ namespace ShopCart
             services.AddDbContext<Contexts.ShopCartContext>(options =>
                 options.UseSqlite(connectionString)
             );
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.Filters.Add(new Filters.ExceptionFilter());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,8 +43,9 @@ namespace ShopCart
             {
                 app.UseDeveloperExceptionPage();
             }
-
             // app.UseHttpsRedirection();
+
+            app.UseCors();
 
             app.UseRouting();
 

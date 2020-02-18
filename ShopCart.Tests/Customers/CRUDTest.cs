@@ -23,9 +23,9 @@ namespace ShopCart.Tests.Customer
         [Fact]
         public async Task CanGetCustomers()
         {
-            var _ctx = Utils.Globals.GetContext();
-            _ctx.Add(new Models.Customer {
-                Name = "Vinicius Fonseca List",
+            var _ctx = Globals.GetContext();
+            _ctx.Customers.Add(new Models.Customer {
+                Name = $"Vinicius Fonseca List - {ID.Generate()}",
                 Gender = "M",
                 Email = "vfonseca@example.com"
             });
@@ -43,7 +43,7 @@ namespace ShopCart.Tests.Customer
         public async Task CanCreateCustomer()
         {
             var payload = new {
-                name = "Vinicius Fonseca Create",
+                name = $"Vinicius Fonseca Create - {ID.Generate()}",
                 email = "vfonseca@example.com",
                 gender = "M",
                 address = new {
@@ -72,16 +72,16 @@ namespace ShopCart.Tests.Customer
         [Fact]
         public async Task CanUpdateCustomer()
         {
-            var _ctx = Utils.Globals.GetContext();
-            var customer = _ctx.Add(new Models.Customer {
-                Name = "Vinicius Fonseca Updated",
+            var _ctx = Globals.GetContext();
+            var customer = _ctx.Customers.Add(new Models.Customer {
+                Name = $"Vinicius Fonseca Updated - {ID.Generate()}",
                 Gender = "M",
                 Email = "vfonseca@example.com"
             }).Entity;
             await _ctx.SaveChangesAsync();
 
             var payload = new {
-                name = "Vinicius Fonseca Updated 2",
+                name = $"Vinicius Fonseca Updated 2 - {ID.Generate()}",
                 email = "vfonseca@example.com",
                 gender = "M",
                 address = new {
@@ -112,9 +112,9 @@ namespace ShopCart.Tests.Customer
         [Fact]
         public async Task CanDeleteCustomer()
         {
-            var _ctx = Utils.Globals.GetContext();
-            var customer = _ctx.Add(new Models.Customer {
-                Name = "Vinicius Fonseca Delete",
+            var _ctx = Globals.GetContext();
+            var customer = _ctx.Customers.Add(new Models.Customer {
+                Name = $"Vinicius Fonseca Delete - {ID.Generate()}",
                 Gender = "M",
                 Email = "vfonseca@example.com"
             }).Entity;
@@ -123,8 +123,8 @@ namespace ShopCart.Tests.Customer
             var deleteResult = await _client.DeleteAsync($"/customers/{customer.Id}");
             deleteResult.EnsureSuccessStatusCode();
 
-            var nonExistentCustomer = await _ctx.Customers.FindAsync(customer.Id);
-            Assert.Equal(nonExistentCustomer, null);
+            var getResult = await _client.GetAsync($"/customers/{customer.Id}");
+            Assert.Equal(getResult.StatusCode, System.Net.HttpStatusCode.NotFound);
         }
     }
 }

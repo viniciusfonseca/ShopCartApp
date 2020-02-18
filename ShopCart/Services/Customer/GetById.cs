@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using ShopCart.Core;
 
 namespace ShopCart.Services
 {
@@ -6,7 +7,12 @@ namespace ShopCart.Services
     {
         public async Task<Models.Customer> GetById(int id)
         {
-            return await _ctx.Customers.FindAsync(id);
+            var customer = await _ctx.Customers.FindAsync(id);
+            if (customer == null)
+            {
+                throw new NotFoundError("Customer not found.");
+            }
+            return customer;
         }
     }
 }
