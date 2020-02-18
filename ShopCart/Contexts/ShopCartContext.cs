@@ -7,6 +7,7 @@ namespace ShopCart.Contexts
         public ShopCartContext(DbContextOptions<ShopCartContext> options) : base(options) {}
 
         public DbSet<Models.Customer> Customers { get; set; }
+        public DbSet<Models.User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

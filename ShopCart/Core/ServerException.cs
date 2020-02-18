@@ -29,4 +29,10 @@ namespace ShopCart.Core
         public override HttpStatusCode Status { get; set; } = HttpStatusCode.BadRequest;
         public override object Payload { get; set; } = "";
     }
+
+    public class NotAuthorizedError : ServerException
+    {
+        public override HttpStatusCode Status { get; set; } = HttpStatusCode.Unauthorized;
+        public override object Payload { get; set; } = "";
+    }
 }
